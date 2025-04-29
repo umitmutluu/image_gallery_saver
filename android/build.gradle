@@ -1,4 +1,4 @@
-group = "com.example.image_gallery_saver"
+group   = "com.example.image_gallery_saver"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -7,10 +7,12 @@ buildscript {
         google()
         mavenCentral()
     }
-
     dependencies {
         classpath("com.android.tools.build:gradle:8.3.2")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+
+        // Eğer bağımsız derlemek istiyorsan Flutter plug-in’i de ekle:
+        // classpath("dev.flutter:flutter-gradle-plugin:1.0.0")
     }
 }
 
@@ -25,17 +27,22 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.example.image_gallery_saver"
+    namespace            "com.example.image_gallery_saver"
 
-    compileSdk = 34
+    // ---------------  ⬇️  BURAYI DÜZELT  ---------------
+    compileSdkVersion    34          // <— Kotlin DSL'deki '=' yerine Groovy DSL sözdizimi
+    // ----------------------------------------------------
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+    defaultConfig {
+        minSdkVersion 21
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
+        jvmTarget = "11"
     }
 
     sourceSets {
@@ -43,24 +50,11 @@ android {
         test.java.srcDirs += "src/test/kotlin"
     }
 
-    defaultConfig {
-        minSdk = 21
-    }
+    // testOptions bloğu isteğe bağlı, aynı kalabilir
+}
 
-    dependencies {
-        testImplementation("org.jetbrains.kotlin:kotlin-test")
-        testImplementation("org.mockito:mockito-core:5.0.0")
-    }
-
-    testOptions {
-        unitTests.all {
-            useJUnitPlatform()
-
-            testLogging {
-               events "passed", "skipped", "failed", "standardOut", "standardError"
-               outputs.upToDateWhen {false}
-               showStandardStreams = true
-            }
-        }
-    }
+dependencies {
+    // test bağımlılıklarını android{} dışına taşı
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.mockito:mockito-core:5.0.0")
 }
